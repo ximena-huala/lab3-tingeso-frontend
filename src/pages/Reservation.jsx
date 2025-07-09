@@ -17,6 +17,7 @@ function Reservations() {
   const [reservations, setReservations] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [discountApplied, setDiscountApplied] = useState(false);
+  const [filterDate, setFilterDate] = useState("");
 
   const basePrices = {
     "10 minutes": 15000,
@@ -145,7 +146,11 @@ function Reservations() {
       })
       .catch(err => {
         console.error(err);
-        setError('Failed to create reservation.');
+        if (err.response && err.response.data) {
+          setError(typeof err.response.data === 'string' ? err.response.data : JSON.stringify(err.response.data));
+        } else {
+          setError('Failed to create reservation.');
+        }
         setMessage('');
       });
   };
@@ -182,7 +187,7 @@ function Reservations() {
 
       <form onSubmit={handleSubmit}>
         <label>Date:</label><br />
-        <input type="date" name="reservationDate" value={form.reservationDate} onChange={handleChange} required /><br />
+        <input type="date" name="reservationDate" value={form.reservationDate} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} /><br />
 
         <label>Time:</label><br />
         <select name="reservationTime" value={form.reservationTime} onChange={handleChange} required>
@@ -223,14 +228,28 @@ function Reservations() {
 
       <hr />
       <h3>Reservations List</h3>
+      <div style={{ marginBottom: '10px' }}>
+        <label>Filtrar por fecha: </label>
+        <input
+          type="date"
+          value={filterDate}
+          onChange={e => setFilterDate(e.target.value)}
+          style={{ marginLeft: '10px' }}
+        />
+        {filterDate && (
+          <button type="button" onClick={() => setFilterDate("")}>Limpiar filtro</button>
+        )}
+      </div>
       <ul>
-        {reservations.map(res => (
-          <li key={res.id}>
-            <strong>{res.reservationDate} at {res.reservationTime}</strong> - {res.numberOfPeople} people - {res.trackTime} - ${res.totalPrice.toLocaleString()}
-            <button onClick={() => handleEdit(res)} style={{ marginLeft: '10px' }}>Edit</button>
-            <button onClick={() => handleDelete(res.id)} style={{ marginLeft: '5px', color: 'red' }}>Delete</button>
-          </li>
-        ))}
+        {reservations
+          .filter(res => !filterDate || res.reservationDate === filterDate)
+          .map(res => (
+            <li key={res.id}>
+              <strong>{res.reservationDate} at {res.reservationTime}</strong> - {res.numberOfPeople} people - {res.trackTime} - ${res.totalPrice.toLocaleString()}
+              <button onClick={() => handleEdit(res)} style={{ marginLeft: '10px' }}>Edit</button>
+              <button onClick={() => handleDelete(res.id)} style={{ marginLeft: '5px', color: 'white' }}>Delete</button>
+            </li>
+          ))}
       </ul>
     </div>
   );

@@ -7,7 +7,6 @@ function Navbar() {
       <ul style={{ display: "flex", listStyle: "none", gap: "1rem", padding: 0 }}>
         <li><Link to="/customers" style={{ color: "white" }}>Customers</Link></li>
         <li><Link to="/karts" style={{ color: "white" }}>Karts</Link></li>
-        <li><Link to="/tariff-discounts" style={{ color: "white" }}>Tariff & Discounts</Link></li>
         <li><Link to="/reservation" style={{ color: "white" }}>Reservation</Link></li>
         <li><Link to="/rack" style={{ color: "white" }}>Weekly Rack</Link></li>
         <li><Link to="/reports" style={{ color: "white" }}>Reports</Link></li>
